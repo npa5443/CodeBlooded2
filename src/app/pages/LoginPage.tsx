@@ -69,10 +69,10 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#eef5f4] via-[#f9fbfb] to-[#eef0e4] flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <BrandLogo className="mb-6" textClassName="text-gray-900" />
+          <BrandLogo className="mb-8 justify-center" size="hero" glow />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h1>
           <p className="text-gray-600">Sign in to your account to continue</p>
         </div>
@@ -116,7 +116,7 @@ export function LoginPage() {
               </label>
               <button
                 type="button"
-                className="text-indigo-600 hover:text-indigo-700"
+                className="text-[#3d89b8] hover:text-[#27485a]"
                 onClick={() => {
                   setResetForm((current) => ({
                     ...current,
@@ -138,7 +138,7 @@ export function LoginPage() {
             Don't have an account?{" "}
             <button
               onClick={() => navigate("/signup")}
-              className="text-indigo-600 hover:text-indigo-700 font-medium"
+              className="text-[#3d89b8] hover:text-[#27485a] font-medium"
             >
               Sign up
             </button>

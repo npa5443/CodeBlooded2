@@ -298,7 +298,7 @@ export function Settings() {
                     {user.avatarUrl ? (
                       <AvatarImage src={user.avatarUrl} alt={user.fullName} />
                     ) : null}
-                    <AvatarFallback className="bg-indigo-100 text-indigo-700 text-2xl font-semibold">
+                    <AvatarFallback className="bg-[#e4f0f7] text-[#31556b] text-2xl font-semibold">
                       {user.avatarInitials}
                     </AvatarFallback>
                   </Avatar>

@@ -60,7 +60,7 @@ export function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#eef5f4] via-[#f9fbfb] to-[#eef0e4] flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <BrandLogo className="mb-6" textClassName="text-gray-900" />
@@ -128,7 +128,7 @@ export function SignupPage() {
               By signing up, you agree to our{" "}
               <button
                 type="button"
-                className="text-indigo-600 hover:text-indigo-700"
+                className="text-[#3d89b8] hover:text-[#27485a]"
                 onClick={() => setActiveLegalDocument("terms")}
               >
                 Terms of Service
@@ -136,7 +136,7 @@ export function SignupPage() {
               and{" "}
               <button
                 type="button"
-                className="text-indigo-600 hover:text-indigo-700"
+                className="text-[#3d89b8] hover:text-[#27485a]"
                 onClick={() => setActiveLegalDocument("privacy")}
               >
                 Privacy Policy
@@ -152,7 +152,7 @@ export function SignupPage() {
             Already have an account?{" "}
             <button
               onClick={() => navigate("/login")}
-              className="text-indigo-600 hover:text-indigo-700 font-medium"
+              className="text-[#3d89b8] hover:text-[#27485a] font-medium"
             >
               Sign in
             </button>

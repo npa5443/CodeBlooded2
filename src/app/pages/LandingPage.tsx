@@ -22,16 +22,16 @@ export function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fdfbf7]">
+    <div className="min-h-screen bg-[#f4f7f6]">
       {/* Header */}
-      <header className="border-b border-[#d4a574]/20 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-[#d3b46f]/20 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <BrandLogo textClassName="text-[#1a1a2e]" />
+          <BrandLogo />
           <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate("/login")} className="hover:bg-[#f4f1ea]">
+            <Button variant="ghost" onClick={() => navigate("/login")} className="hover:bg-[#e8f0ef] text-[#27485a]">
               Log In
             </Button>
-            <Button onClick={() => navigate("/signup")} className="bg-[#1a1a2e] hover:bg-[#2d3250] text-white shadow-md">
+            <Button onClick={() => navigate("/signup")} className="bg-[#27485a] hover:bg-[#31556b] text-white shadow-md">
               Sign Up
             </Button>
           </div>
@@ -39,15 +39,15 @@ export function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#fdfbf7] via-[#f9f7f4] to-[#f4f1ea]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#f4f7f6] via-[#f8fbfa] to-[#edf1e8]">
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-[#d4a574] rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#8b3a3a] rounded-full blur-3xl" />
+          <div className="absolute top-20 left-10 w-72 h-72 bg-[#4f9ccc] rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#8db889] rounded-full blur-3xl" />
         </div>
         <div className="max-w-7xl mx-auto px-6 py-24 relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 text-indigo-700 text-sm font-medium mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#e4f0f7] text-[#31556b] text-sm font-medium mb-6">
                 <Lightbulb className="size-4" />
                 Education Technology for Professors
               </div>
@@ -75,14 +75,14 @@ export function LandingPage() {
                   className="w-full h-auto"
                 />
               </div>
-              <div className="absolute -bottom-6 -right-6 w-72 h-72 bg-gradient-to-br from-purple-400 to-indigo-400 rounded-full blur-3xl opacity-20 -z-10" />
+              <div className="absolute -bottom-6 -right-6 w-72 h-72 bg-gradient-to-br from-[#8db889] to-[#4f9ccc] rounded-full blur-3xl opacity-20 -z-10" />
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section ref={demoSectionRef} className="bg-gray-50 py-24">
+      <section ref={demoSectionRef} className="bg-[#eef5f4] py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -95,32 +95,32 @@ export function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <FeatureCard
-              icon={<Layout className="size-6 text-indigo-600" />}
+              icon={<Layout className="size-6 text-[#4f9ccc]" />}
               title="Course Overview"
               description="Get a bird's-eye view of all your courses with activity snapshots, quick stats, and actionable insights at a glance."
             />
             <FeatureCard
-              icon={<BookOpen className="size-6 text-indigo-600" />}
+              icon={<BookOpen className="size-6 text-[#4f9ccc]" />}
               title="Knowledge Hub"
               description="Centralize syllabi, textbooks, assignments, and course materials. Review and approve content with seamless organization."
             />
             <FeatureCard
-              icon={<LineChart className="size-6 text-indigo-600" />}
+              icon={<LineChart className="size-6 text-[#4f9ccc]" />}
               title="Student Insights"
               description="Identify student weak points, track quiz trends, and discover understanding gaps to tailor your teaching approach."
             />
             <FeatureCard
-              icon={<Calendar className="size-6 text-indigo-600" />}
+              icon={<Calendar className="size-6 text-[#4f9ccc]" />}
               title="Academic Calendar"
               description="Manage classes, deadlines, exams, and holidays with a polished, intuitive calendar designed for academic workflows."
             />
             <FeatureCard
-              icon={<Layout className="size-6 text-indigo-600" />}
+              icon={<Layout className="size-6 text-[#4f9ccc]" />}
               title="Lesson Planner"
               description="Structure your course curriculum, organize tasks, and plan lessons with intelligent tools that save hours of prep time."
             />
             <FeatureCard
-              icon={<Lightbulb className="size-6 text-indigo-600" />}
+              icon={<Lightbulb className="size-6 text-[#4f9ccc]" />}
               title="Slide Enhancement"
               description="Improve lecture slides with AI-driven clarity suggestions and presentation management tools that engage students."
             />
@@ -163,13 +163,13 @@ export function LandingPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="bg-gradient-to-br from-indigo-600 to-purple-600 py-24 text-white">
+      <section className="bg-gradient-to-br from-[#31556b] via-[#386981] to-[#6ea98d] py-24 text-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">
               Why Professors Choose Sylla
             </h2>
-            <p className="text-xl text-indigo-100 max-w-3xl mx-auto">
+            <p className="text-xl text-[#dceef2] max-w-3xl mx-auto">
               A comprehensive platform designed to enhance every aspect of your teaching workflow.
             </p>
           </div>
@@ -192,7 +192,7 @@ export function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-[#f8fbfa]">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
             Ready to Transform Your Teaching?
@@ -213,10 +213,10 @@ export function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 py-12 bg-gray-50">
+      <footer className="border-t border-[#d5e3e1] py-12 bg-[#eef5f4]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between">
-            <BrandLogo textClassName="text-gray-900 text-lg" />
+            <BrandLogo />
             <p className="text-gray-500 text-sm">
               © 2026 Sylla. Empowering educators worldwide.
             </p>
@@ -229,8 +229,8 @@ export function LandingPage() {
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
   return (
-    <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-      <div className="size-12 rounded-lg bg-indigo-50 flex items-center justify-center mb-4">
+    <div className="bg-white rounded-xl p-8 shadow-sm border border-[#d5e3e1] hover:shadow-md transition-shadow">
+      <div className="size-12 rounded-lg bg-[#e4f0f7] flex items-center justify-center mb-4">
         {icon}
       </div>
       <h3 className="text-xl font-semibold text-gray-900 mb-3">{title}</h3>
@@ -242,7 +242,7 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode; titl
 function MissionPoint({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-3">
-      <CheckCircle2 className="size-6 text-indigo-600 flex-shrink-0 mt-0.5" />
+      <CheckCircle2 className="size-6 text-[#4f9ccc] flex-shrink-0 mt-0.5" />
       <span className="text-gray-700 text-lg">{text}</span>
     </div>
   );
@@ -252,7 +252,7 @@ function BenefitCard({ title, description }: { title: string; description: strin
   return (
     <div className="text-center">
       <h3 className="text-2xl font-semibold mb-3">{title}</h3>
-      <p className="text-indigo-100 text-lg leading-relaxed">{description}</p>
+      <p className="text-[#dceef2] text-lg leading-relaxed">{description}</p>
     </div>
   );
 }

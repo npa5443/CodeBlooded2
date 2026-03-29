@@ -46,11 +46,11 @@ import type {
 } from "../lib/types";
 
 const courseColorOptions = [
-  { value: "bg-blue-500", label: "Blue" },
-  { value: "bg-purple-500", label: "Purple" },
-  { value: "bg-green-500", label: "Green" },
-  { value: "bg-orange-500", label: "Orange" },
-  { value: "bg-rose-500", label: "Rose" },
+  { value: "bg-sky-500", label: "Sky" },
+  { value: "bg-teal-500", label: "Teal" },
+  { value: "bg-emerald-400", label: "Leaf" },
+  { value: "bg-amber-400", label: "Gold" },
+  { value: "bg-cyan-600", label: "Deep Sea" },
 ];
 
 function CourseColorPicker({
@@ -110,7 +110,7 @@ export function Dashboard() {
     name: "",
     code: "",
     students: "35",
-    color: "bg-blue-500",
+    color: "bg-sky-500",
   });
 
   useEffect(() => {
@@ -254,7 +254,7 @@ export function Dashboard() {
         name: "",
         code: "",
         students: "35",
-        color: "bg-blue-500",
+        color: "bg-sky-500",
       });
       setIsAddCourseOpen(false);
       toast.success("Course created.");
@@ -377,25 +377,25 @@ export function Dashboard() {
 
   return (
     <>
-      <div className="h-screen flex bg-[#fdfbf7]">
-        <aside className="w-80 bg-gradient-to-b from-[#1a1a2e] to-[#2d3250] flex flex-col shadow-xl">
-          <div className="p-6 border-b border-white/10">
-            <BrandLogo textClassName="text-white text-xl" />
+      <div className="h-screen flex bg-[#f4f7f6]">
+        <aside className="w-80 bg-gradient-to-b from-[#0D214D] to-[#16315f] flex flex-col shadow-xl">
+          <div className="flex justify-center border-b border-[#70a3b7]/40 bg-[#70a3b7] px-6 py-8">
+            <BrandLogo className="justify-center" size="large" />
           </div>
 
           <div className="flex-1 overflow-y-auto p-4">
-            <div className="text-xs font-semibold text-[#d4a574] uppercase tracking-wider mb-3 px-3">
+            <div className="text-xs font-semibold text-[#a8c6d2] uppercase tracking-wider mb-3 px-3">
               My Courses
             </div>
             <div className="space-y-1">
               {courses.map((course) => (
                 <button
                   key={course.id}
-                  onClick={() => setSelectedCourseId(course.id)}
+                    onClick={() => setSelectedCourseId(course.id)}
                   className={`w-full text-left px-3 py-3 rounded-lg transition-all ${
                     selectedCourseId === course.id
-                      ? "bg-[#d4a574] text-[#1a1a2e] shadow-md"
-                      : "text-gray-300 hover:bg-white/5"
+                      ? "bg-[#70a3b7]/22 text-white shadow-md ring-1 ring-[#70a3b7]/25"
+                      : "text-[#d7e6e4] hover:bg-white/6"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -409,8 +409,8 @@ export function Dashboard() {
                       <div
                         className={`text-sm mt-0.5 ${
                           selectedCourseId === course.id
-                            ? "text-[#1a1a2e]/70"
-                            : "text-gray-400"
+                            ? "text-white/72"
+                            : "text-[#a9c0c8]"
                         }`}
                       >
                         {course.code} • {course.students} students
@@ -424,7 +424,7 @@ export function Dashboard() {
 
           <div className="p-4 border-t border-white/10">
             <Button
-              className="w-full bg-[#d4a574] hover:bg-[#c4956a] text-[#1a1a2e] shadow-md"
+              className="w-full bg-[#70a3b7] hover:bg-[#6696a9] text-[#0D214D] shadow-md"
               onClick={() => setIsAddCourseOpen(true)}
             >
               <Plus className="size-4 mr-2" />
@@ -434,7 +434,7 @@ export function Dashboard() {
         </aside>
 
         <div className="flex-1 flex flex-col overflow-hidden">
-          <header className="bg-white/80 backdrop-blur-md border-b border-[#d4a574]/20 px-8 py-4 flex items-center justify-between shadow-sm">
+          <header className="bg-white/85 backdrop-blur-md border-b border-[#70a3b7]/20 px-8 py-4 flex items-center justify-between shadow-sm">
             <div>
               <h1 className="text-2xl font-semibold text-gray-900">
                 {selectedCourse.name}
@@ -449,7 +449,7 @@ export function Dashboard() {
                     {user?.avatarUrl ? (
                       <AvatarImage src={user.avatarUrl} alt={user.fullName} />
                     ) : null}
-                    <AvatarFallback className="bg-indigo-100 text-indigo-700 font-medium">
+                    <AvatarFallback className="bg-[#e4f0f7] text-[#31556b] font-medium">
                       {user?.avatarInitials ?? "FF"}
                     </AvatarFallback>
                   </Avatar>
