@@ -1,6 +1,13 @@
 import { RouterProvider } from 'react-router';
 import { router } from './routes';
+import { Toaster } from "sonner";
+import { AuthProvider } from "./lib/auth";
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+      <Toaster richColors position="top-right" />
+    </AuthProvider>
+  );
 }

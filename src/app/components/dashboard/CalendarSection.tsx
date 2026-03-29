@@ -1,88 +1,68 @@
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, Clock, MapPin, Users } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
+import { format, isSameDay, isToday } from "date-fns";
+import { useMemo, useState } from "react";
+import {
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MapPin,
+  Plus,
+} from "lucide-react";
+import type { CalendarEvent, CalendarEventType } from "../../lib/types";
 import { Badge } from "../ui/badge";
-
-interface Course {
-  id: string;
-  name: string;
-  code: string;
-  color: string;
-  students: number;
-}
+import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 interface CalendarSectionProps {
-  course: Course;
+  events: CalendarEvent[];
+  onAddEvent: (payload: {
+    title: string;
+    type: CalendarEventType;
+    startAt: string;
+    endAt?: string;
+    location?: string;
+    description?: string;
+  }) => Promise<void>;
 }
 
-interface CalendarEvent {
-  id: string;
-  title: string;
-  type: "lecture" | "exam" | "deadline" | "office-hours" | "holiday";
-  date: Date;
-  startTime?: string;
-  endTime?: string;
-  location?: string;
-  description?: string;
+function combineDateAndTime(date: string, time?: string) {
+  const [year, month, day] = date.split("-").map(Number);
+  const [hours, minutes] = (time ?? "12:00").split(":").map(Number);
+  return new Date(year, month - 1, day, hours, minutes).toISOString();
 }
 
-export function CalendarSection({ course }: CalendarSectionProps) {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 2, 28)); // March 28, 2026
-  const [view, setView] = useState<"month" | "week">("month");
+export function CalendarSection({ events, onAddEvent }: CalendarSectionProps) {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [eventForm, setEventForm] = useState({
+    title: "",
+    type: "lecture" as CalendarEventType,
+    date: "",
+    startTime: "",
+    endTime: "",
+    location: "",
+    description: "",
+  });
 
-  // Mock events
-  const events: CalendarEvent[] = [
-    {
-      id: "1",
-      title: "Lecture 10: Binary Search Trees",
-      type: "lecture",
-      date: new Date(2026, 2, 29),
-      startTime: "10:00 AM",
-      endTime: "11:30 AM",
-      location: "Hall B-204",
-    },
-    {
-      id: "2",
-      title: "Lab Session 9",
-      type: "lecture",
-      date: new Date(2026, 2, 30),
-      startTime: "2:00 PM",
-      endTime: "3:30 PM",
-      location: "Computer Lab 3",
-    },
-    {
-      id: "3",
-      title: "Assignment 5 Due",
-      type: "deadline",
-      date: new Date(2026, 2, 30),
-      startTime: "11:59 PM",
-    },
-    {
-      id: "4",
-      title: "Midterm Exam",
-      type: "exam",
-      date: new Date(2026, 3, 3),
-      startTime: "9:00 AM",
-      endTime: "11:00 AM",
-      location: "Main Auditorium",
-    },
-    {
-      id: "5",
-      title: "Office Hours",
-      type: "office-hours",
-      date: new Date(2026, 3, 2),
-      startTime: "3:00 PM",
-      endTime: "5:00 PM",
-      location: "Office 401",
-    },
-    {
-      id: "6",
-      title: "Spring Break",
-      type: "holiday",
-      date: new Date(2026, 3, 13),
-    },
-  ];
+  const sortedEvents = useMemo(
+    () =>
+      [...events].sort(
+        (left, right) =>
+          new Date(left.startAt).getTime() - new Date(right.startAt).getTime(),
+      ),
+    [events],
+  );
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -92,45 +72,57 @@ export function CalendarSection({ course }: CalendarSectionProps) {
     const daysInMonth = lastDay.getDate();
     const startingDayOfWeek = firstDay.getDay();
 
-    const days = [];
-    // Add empty cells for days before the month starts
-    for (let i = 0; i < startingDayOfWeek; i++) {
+    const days: Array<Date | null> = [];
+    for (let index = 0; index < startingDayOfWeek; index += 1) {
       days.push(null);
     }
-    // Add all days of the month
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      days.push(new Date(year, month, day));
     }
     return days;
   };
 
   const getEventsForDate = (date: Date | null) => {
-    if (!date) return [];
-    return events.filter(
-      (event) =>
-        event.date.getDate() === date.getDate() &&
-        event.date.getMonth() === date.getMonth() &&
-        event.date.getFullYear() === date.getFullYear()
+    if (!date) {
+      return [];
+    }
+
+    return sortedEvents.filter((event) =>
+      isSameDay(new Date(event.startAt), date),
     );
   };
 
   const previousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
+    );
   };
 
   const nextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
+    );
   };
 
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const days = getDaysInMonth(currentDate);
-  const today = new Date(2026, 2, 28); // Current date in the app
+  const today = new Date();
 
-  const getEventColor = (type: CalendarEvent["type"]) => {
+  const getEventColor = (type: CalendarEventType) => {
     switch (type) {
       case "lecture":
         return "bg-blue-500";
@@ -147,26 +139,73 @@ export function CalendarSection({ course }: CalendarSectionProps) {
     }
   };
 
-  const getEventBadge = (type: CalendarEvent["type"]) => {
+  const getEventBadge = (type: CalendarEventType) => {
     switch (type) {
       case "lecture":
-        return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Lecture</Badge>;
+        return (
+          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
+            Lecture
+          </Badge>
+        );
       case "exam":
-        return <Badge className="bg-red-100 text-red-700 hover:bg-red-100">Exam</Badge>;
+        return (
+          <Badge className="bg-red-100 text-red-700 hover:bg-red-100">Exam</Badge>
+        );
       case "deadline":
-        return <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100">Deadline</Badge>;
+        return (
+          <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100">
+            Deadline
+          </Badge>
+        );
       case "office-hours":
-        return <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Office Hours</Badge>;
+        return (
+          <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+            Office Hours
+          </Badge>
+        );
       case "holiday":
-        return <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100">Holiday</Badge>;
+        return (
+          <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100">
+            Holiday
+          </Badge>
+        );
       default:
         return null;
     }
   };
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await onAddEvent({
+        title: eventForm.title,
+        type: eventForm.type,
+        startAt: combineDateAndTime(eventForm.date, eventForm.startTime),
+        endAt: eventForm.endTime
+          ? combineDateAndTime(eventForm.date, eventForm.endTime)
+          : undefined,
+        location: eventForm.location || undefined,
+        description: eventForm.description || undefined,
+      });
+      setEventForm({
+        title: "",
+        type: "lecture",
+        date: "",
+        startTime: "",
+        endTime: "",
+        location: "",
+        description: "",
+      });
+      setIsDialogOpen(false);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {/* Calendar Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" onClick={previousMonth}>
@@ -183,7 +222,7 @@ export function CalendarSection({ course }: CalendarSectionProps) {
           <Button variant="outline" onClick={() => setCurrentDate(today)}>
             Today
           </Button>
-          <Button>
+          <Button onClick={() => setIsDialogOpen(true)}>
             <Plus className="size-4 mr-2" />
             Add Event
           </Button>
@@ -191,70 +230,60 @@ export function CalendarSection({ course }: CalendarSectionProps) {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Calendar Grid */}
         <Card className="lg:col-span-2">
           <CardContent className="p-6">
-            {/* Day Headers */}
             <div className="grid grid-cols-7 gap-2 mb-2">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                <div
-                  key={day}
-                  className="text-center text-sm font-semibold text-gray-600 py-2"
-                >
+                <div key={day} className="text-center text-sm font-semibold text-gray-600 py-2">
                   {day}
                 </div>
               ))}
             </div>
 
-            {/* Calendar Days */}
             <div className="grid grid-cols-7 gap-2">
               {days.map((date, index) => {
                 const dayEvents = getEventsForDate(date);
-                const isToday =
-                  date &&
-                  date.getDate() === today.getDate() &&
-                  date.getMonth() === today.getMonth() &&
-                  date.getFullYear() === today.getFullYear();
+                const activeToday = Boolean(date && isToday(date));
 
                 return (
                   <div
-                    key={index}
+                    key={`${date?.toISOString() ?? "empty"}-${index}`}
                     className={`min-h-24 p-2 rounded-lg border transition-all ${
                       !date
                         ? "bg-gray-50 border-transparent"
-                        : isToday
-                        ? "bg-indigo-50 border-indigo-500 border-2"
-                        : "bg-white border-gray-200 hover:border-gray-300 cursor-pointer"
+                        : activeToday
+                          ? "bg-indigo-50 border-indigo-500 border-2"
+                          : "bg-white border-gray-200 hover:border-gray-300 cursor-pointer"
                     }`}
                   >
-                    {date && (
+                    {date ? (
                       <>
                         <div
                           className={`text-sm font-medium mb-1 ${
-                            isToday ? "text-indigo-700" : "text-gray-900"
+                            activeToday ? "text-indigo-700" : "text-gray-900"
                           }`}
                         >
                           {date.getDate()}
                         </div>
                         <div className="space-y-1">
-                          {dayEvents.slice(0, 2).map((event) => (
+                          {dayEvents.slice(0, 2).map((calendarEvent) => (
                             <div
-                              key={event.id}
+                              key={calendarEvent.id}
                               className={`text-xs px-1.5 py-1 rounded ${getEventColor(
-                                event.type
+                                calendarEvent.type,
                               )} text-white truncate`}
                             >
-                              {event.title}
+                              {calendarEvent.title}
                             </div>
                           ))}
-                          {dayEvents.length > 2 && (
+                          {dayEvents.length > 2 ? (
                             <div className="text-xs text-gray-600 px-1.5">
                               +{dayEvents.length - 2} more
                             </div>
-                          )}
+                          ) : null}
                         </div>
                       </>
-                    )}
+                    ) : null}
                   </div>
                 );
               })}
@@ -262,54 +291,53 @@ export function CalendarSection({ course }: CalendarSectionProps) {
           </CardContent>
         </Card>
 
-        {/* Upcoming Events */}
         <Card>
           <CardHeader>
             <CardTitle>Upcoming Events</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {events
-                .filter((event) => event.date >= today)
-                .sort((a, b) => a.date.getTime() - b.date.getTime())
+              {sortedEvents
+                .filter((calendarEvent) => new Date(calendarEvent.startAt) >= today)
                 .slice(0, 5)
-                .map((event) => (
+                .map((calendarEvent) => (
                   <div
-                    key={event.id}
+                    key={calendarEvent.id}
                     className="p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-start gap-3 mb-2">
-                      <div className={`size-2 rounded-full ${getEventColor(event.type)} mt-1.5`} />
+                      <div
+                        className={`size-2 rounded-full ${getEventColor(
+                          calendarEvent.type,
+                        )} mt-1.5`}
+                      />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 text-sm mb-1">{event.title}</h4>
-                        {getEventBadge(event.type)}
+                        <h4 className="font-medium text-gray-900 text-sm mb-1">
+                          {calendarEvent.title}
+                        </h4>
+                        {getEventBadge(calendarEvent.type)}
                       </div>
                     </div>
                     <div className="space-y-1 ml-5">
                       <div className="flex items-center gap-2 text-xs text-gray-600">
                         <CalendarIcon className="size-3" />
+                        <span>{format(new Date(calendarEvent.startAt), "MMM d")}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-600">
+                        <Clock className="size-3" />
                         <span>
-                          {event.date.toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })}
+                          {format(new Date(calendarEvent.startAt), "h:mm a")}
+                          {calendarEvent.endAt
+                            ? ` - ${format(new Date(calendarEvent.endAt), "h:mm a")}`
+                            : ""}
                         </span>
                       </div>
-                      {event.startTime && (
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
-                          <Clock className="size-3" />
-                          <span>
-                            {event.startTime}
-                            {event.endTime && ` - ${event.endTime}`}
-                          </span>
-                        </div>
-                      )}
-                      {event.location && (
+                      {calendarEvent.location ? (
                         <div className="flex items-center gap-2 text-xs text-gray-600">
                           <MapPin className="size-3" />
-                          <span>{event.location}</span>
+                          <span>{calendarEvent.location}</span>
                         </div>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 ))}
@@ -318,7 +346,6 @@ export function CalendarSection({ course }: CalendarSectionProps) {
         </Card>
       </div>
 
-      {/* Legend */}
       <Card>
         <CardHeader>
           <CardTitle>Event Types</CardTitle>
@@ -348,6 +375,128 @@ export function CalendarSection({ course }: CalendarSectionProps) {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Event</DialogTitle>
+            <DialogDescription>
+              Save a new calendar event to this course.
+            </DialogDescription>
+          </DialogHeader>
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <Label htmlFor="event-title">Title</Label>
+              <Input
+                id="event-title"
+                value={eventForm.title}
+                onChange={(event) =>
+                  setEventForm((current) => ({
+                    ...current,
+                    title: event.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="event-type">Type</Label>
+                <Input
+                  id="event-type"
+                  value={eventForm.type}
+                  onChange={(event) =>
+                    setEventForm((current) => ({
+                      ...current,
+                      type: event.target.value as CalendarEventType,
+                    }))
+                  }
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="event-date">Date</Label>
+                <Input
+                  id="event-date"
+                  type="date"
+                  value={eventForm.date}
+                  onChange={(event) =>
+                    setEventForm((current) => ({
+                      ...current,
+                      date: event.target.value,
+                    }))
+                  }
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="event-start">Start time</Label>
+                <Input
+                  id="event-start"
+                  type="time"
+                  value={eventForm.startTime}
+                  onChange={(event) =>
+                    setEventForm((current) => ({
+                      ...current,
+                      startTime: event.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="event-end">End time</Label>
+                <Input
+                  id="event-end"
+                  type="time"
+                  value={eventForm.endTime}
+                  onChange={(event) =>
+                    setEventForm((current) => ({
+                      ...current,
+                      endTime: event.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="event-location">Location</Label>
+              <Input
+                id="event-location"
+                value={eventForm.location}
+                onChange={(event) =>
+                  setEventForm((current) => ({
+                    ...current,
+                    location: event.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="event-description">Description</Label>
+              <Input
+                id="event-description"
+                value={eventForm.description}
+                onChange={(event) =>
+                  setEventForm((current) => ({
+                    ...current,
+                    description: event.target.value,
+                  }))
+                }
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Saving..." : "Add Event"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

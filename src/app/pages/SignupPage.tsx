@@ -1,41 +1,81 @@
-import { GraduationCap } from "lucide-react";
+import { BrandLogo } from "../components/common/BrandLogo";
 import { Button } from "../components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import { useAuth } from "../lib/auth";
 
 export function SignupPage() {
   const navigate = useNavigate();
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     university: "",
     password: "",
   });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeLegalDocument, setActiveLegalDocument] = useState<
+    "terms" | "privacy" | null
+  >(null);
 
-  const handleSignup = (e: React.FormEvent) => {
+  const legalCopy = {
+    terms: {
+      title: "Terms of Service",
+      description:
+        "Sylla is intended for lawful academic planning and teaching support. You are responsible for the course materials, student data, and AI prompts you submit.",
+    },
+    privacy: {
+      title: "Privacy Policy",
+      description:
+        "Sylla stores your account information and course data locally for this app. Only use approved content in prompts and uploads, and avoid entering restricted student data unless you are authorized to handle it.",
+    },
+  } as const;
+
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock signup - redirect to dashboard
-    navigate("/dashboard");
+    setErrorMessage("");
+    setIsSubmitting(true);
+
+    try {
+      await signup(formData);
+      navigate("/dashboard", { replace: true });
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unable to create your account.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center gap-3 mb-6">
-            <div className="size-12 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-              <GraduationCap className="size-7 text-white" />
-            </div>
-            <span className="text-3xl font-semibold text-gray-900">Faculty Flow</span>
-          </div>
+          <BrandLogo className="mb-6" textClassName="text-gray-900" />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Create Your Account</h1>
           <p className="text-gray-600">Start your free trial today</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
           <form onSubmit={handleSignup} className="space-y-5">
+            {errorMessage ? (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {errorMessage}
+              </div>
+            ) : null}
+
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name</Label>
               <Input
@@ -86,17 +126,25 @@ export function SignupPage() {
 
             <div className="text-xs text-gray-600">
               By signing up, you agree to our{" "}
-              <a href="#" className="text-indigo-600 hover:text-indigo-700">
+              <button
+                type="button"
+                className="text-indigo-600 hover:text-indigo-700"
+                onClick={() => setActiveLegalDocument("terms")}
+              >
                 Terms of Service
-              </a>{" "}
+              </button>{" "}
               and{" "}
-              <a href="#" className="text-indigo-600 hover:text-indigo-700">
+              <button
+                type="button"
+                className="text-indigo-600 hover:text-indigo-700"
+                onClick={() => setActiveLegalDocument("privacy")}
+              >
                 Privacy Policy
-              </a>
+              </button>
             </div>
 
-            <Button type="submit" className="w-full" size="lg">
-              Create Account
+            <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+              {isSubmitting ? "Creating Account..." : "Create Account"}
             </Button>
           </form>
 
@@ -120,6 +168,33 @@ export function SignupPage() {
           </button>
         </div>
       </div>
+
+      <Dialog
+        open={Boolean(activeLegalDocument)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setActiveLegalDocument(null);
+          }
+        }}
+      >
+        <DialogContent>
+          {activeLegalDocument ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>{legalCopy[activeLegalDocument].title}</DialogTitle>
+                <DialogDescription>
+                  {legalCopy[activeLegalDocument].description}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button type="button" onClick={() => setActiveLegalDocument(null)}>
+                  Close
+                </Button>
+              </DialogFooter>
+            </>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

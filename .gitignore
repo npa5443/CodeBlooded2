@@ -1,1 +1,5 @@
 node_modules
+dist
+server/data/runtime-store.json
+.env
+.env.local

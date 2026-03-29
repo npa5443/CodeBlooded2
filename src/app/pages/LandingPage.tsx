@@ -1,22 +1,32 @@
-import { GraduationCap, BookOpen, LineChart, Calendar, Layout, Lightbulb, ChevronRight, CheckCircle2 } from "lucide-react";
+import { useRef } from "react";
+import { BookOpen, LineChart, Calendar, Layout, Lightbulb, ChevronRight, CheckCircle2 } from "lucide-react";
+import { BrandLogo } from "../components/common/BrandLogo";
 import { Button } from "../components/ui/button";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useNavigate } from "react-router";
 
 export function LandingPage() {
   const navigate = useNavigate();
+  const demoSectionRef = useRef<HTMLElement | null>(null);
+
+  const scrollToDemo = () => {
+    demoSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const scheduleDemo = () => {
+    window.location.href =
+      "mailto:demo@sylla.app?subject=Sylla%20Demo%20Request&body=Hi%20Sylla%2C%0A%0AI'd%20like%20to%20schedule%20a%20demo%20for%20my%20teaching%20team.%0A%0AThanks!";
+  };
 
   return (
     <div className="min-h-screen bg-[#fdfbf7]">
       {/* Header */}
       <header className="border-b border-[#d4a574]/20 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-gradient-to-br from-[#1a1a2e] to-[#2d3250] flex items-center justify-center shadow-lg">
-              <GraduationCap className="size-6 text-[#d4a574]" />
-            </div>
-            <span className="text-2xl font-semibold text-[#1a1a2e]">Faculty Flow</span>
-          </div>
+          <BrandLogo textClassName="text-[#1a1a2e]" />
           <div className="flex items-center gap-3">
             <Button variant="ghost" onClick={() => navigate("/login")} className="hover:bg-[#f4f1ea]">
               Log In
@@ -45,14 +55,14 @@ export function LandingPage() {
                 Streamline Your Teaching,<br />Amplify Student Success
               </h1>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Faculty Flow empowers professors with intelligent tools to organize courses, understand student needs, and deliver exceptional education—all in one beautifully designed platform.
+                Sylla empowers professors with intelligent tools to organize courses, understand student needs, and deliver exceptional education all in one beautifully designed platform.
               </p>
               <div className="flex gap-4">
                 <Button size="lg" className="text-base" onClick={() => navigate("/signup")}>
                   Get Started Free
                   <ChevronRight className="size-5 ml-1" />
                 </Button>
-                <Button size="lg" variant="outline" className="text-base" onClick={() => navigate("/login")}>
+                <Button size="lg" variant="outline" className="text-base" onClick={scrollToDemo}>
                   View Demo
                 </Button>
               </div>
@@ -61,7 +71,7 @@ export function LandingPage() {
               <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
                 <ImageWithFallback
                   src="https://images.unsplash.com/photo-1643287295715-ce7c61cfedbf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlZHVjYXRpb24lMjB0ZWNobm9sb2d5JTIwZGFzaGJvYXJkJTIwc2NyZWVufGVufDF8fHx8MTc3NDcyOTQwOXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                  alt="Faculty Flow Dashboard"
+                  alt="Sylla Dashboard"
                   className="w-full h-auto"
                 />
               </div>
@@ -72,7 +82,7 @@ export function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="bg-gray-50 py-24">
+      <section ref={demoSectionRef} className="bg-gray-50 py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -136,7 +146,7 @@ export function LandingPage() {
                 Our Mission: Empowering Educators
               </h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Faculty Flow was built by educators, for educators. We understand the challenges of managing multiple courses, tracking student progress, and maintaining academic excellence.
+                Sylla was built by educators, for educators. We understand the challenges of managing multiple courses, tracking student progress, and maintaining academic excellence.
               </p>
               <div className="space-y-4 mb-8">
                 <MissionPoint text="Reduce administrative overhead by up to 40%" />
@@ -157,7 +167,7 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">
-              Why Professors Choose Faculty Flow
+              Why Professors Choose Sylla
             </h2>
             <p className="text-xl text-indigo-100 max-w-3xl mx-auto">
               A comprehensive platform designed to enhance every aspect of your teaching workflow.
@@ -188,14 +198,14 @@ export function LandingPage() {
             Ready to Transform Your Teaching?
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Join Faculty Flow today and experience the future of academic course management.
+            Join Sylla today and experience the future of academic course management.
           </p>
           <div className="flex gap-4 justify-center">
             <Button size="lg" className="text-base" onClick={() => navigate("/signup")}>
               Start Free Trial
               <ChevronRight className="size-5 ml-1" />
             </Button>
-            <Button size="lg" variant="outline" className="text-base">
+            <Button size="lg" variant="outline" className="text-base" onClick={scheduleDemo}>
               Schedule Demo
             </Button>
           </div>
@@ -206,14 +216,9 @@ export function LandingPage() {
       <footer className="border-t border-gray-200 py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="size-8 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                <GraduationCap className="size-5 text-white" />
-              </div>
-              <span className="text-lg font-semibold text-gray-900">Faculty Flow</span>
-            </div>
+            <BrandLogo textClassName="text-gray-900 text-lg" />
             <p className="text-gray-500 text-sm">
-              © 2026 Faculty Flow. Empowering educators worldwide.
+              © 2026 Sylla. Empowering educators worldwide.
             </p>
           </div>
         </div>
